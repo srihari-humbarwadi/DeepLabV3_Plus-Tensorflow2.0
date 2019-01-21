@@ -1,2 +1,4 @@
-# keras-deeplabV3-plus
-deep lab v3 implemented in Keras
+# DeepLabV3 Plus
+
+#To Do
+- [ ] Implement modified Xception backbone as originally mentioned in the paper
