@@ -61,8 +61,8 @@ def DeepLabV3Plus(img_height, img_width, nclasses=66):
                kernel_initializer='he_normal', name='decoder_conv2d_2')(x)
 
     x = Conv2D(nclasses, (1, 1), padding='same', name='output_layer')(x)
+    x = Upsample(x, [img_height, img_width])    
     x = Activation('softmax')(x)
-    x = Upsample(x, [img_height, img_width])
     print('*** Building Network Completed***')    
     model = Model(inputs=base_model.input, outputs=x, name='DeepLabV3_Plus')
     print(f'*** Output_Shape => {model.output_shape} ***')    
