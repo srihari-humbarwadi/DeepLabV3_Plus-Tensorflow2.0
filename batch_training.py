@@ -147,8 +147,8 @@ class seg_gen(Sequence):
             batch_y.append(mask)
             batch_x.append(_image)
         return np.array(batch_x), np.array(batch_y)
-# to-do
--> data augmentation on random crops
+'''to-do
+-> data augmentation on random crops'''
 #     def __getitem__(self, idx):
 #         idx = np.random.randint(0, samples, batch_size)
 #         batch_x, batch_y = [], []
