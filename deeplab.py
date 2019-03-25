@@ -1,4 +1,5 @@
 author: srihari
+
 import tensorflow as tf
 from tensorflow.keras import backend as K
 from tensorflow.keras.models import Model
@@ -11,7 +12,7 @@ def Upsample(tensor, size):
     name = tensor.name.split('/')[0] + '_upsample'
 
     def bilinear_upsample(x, size):
-        resized = tf.image.resize_bilinear(images=x, size=size)
+        resized = tf.image.resize_bilinear(images=x, size=size, align_corners=True)
         return resized
     y = Lambda(lambda x: bilinear_upsample(x, size),
                output_shape=size, name=name)(tensor)
