@@ -68,7 +68,7 @@ def DeepLabV3Plus(img_height, img_width, nclasses=66):
         img_height, img_width, 3), weights='imagenet', include_top=False)
     image_features = base_model.get_layer('activation_39').output
     x_a = ASPP(image_features)
-    x_a = Upsample(tensor=x_a, size=[img_height // 4, img_height // 4])
+    x_a = Upsample(tensor=x_a, size=[img_height // 4, img_width // 4])
 
     x_b = base_model.get_layer('activation_9').output
     x_b = Conv2D(filters=48, kernel_size=1, padding='same',
