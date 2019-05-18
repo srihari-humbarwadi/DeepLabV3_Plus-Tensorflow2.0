@@ -11,14 +11,14 @@ H, W = 512, 512
 num_classes = 34
 
 image_list = sorted(glob(
-    '/home/mia/backup/research/autonomous_driving/cityscapes/dataset/train_images/*'))
+    'cityscapes/dataset/train_images/*'))
 mask_list = sorted(glob(
-    '/home/mia/backup/research/autonomous_driving/cityscapes/dataset/train_masks/*'))
+    'cityscapes/dataset/train_masks/*'))
 
 val_image_list = sorted(glob(
-    '/home/mia/backup/research/autonomous_driving/cityscapes/dataset/val_images/*'))
+    'cityscapes/dataset/val_images/*'))
 val_mask_list = sorted(glob(
-    '/home/mia/backup/research/autonomous_driving/cityscapes/dataset/val_masks/*'))
+    'cityscapes/dataset/val_masks/*'))
 
 print('Found', len(image_list), 'training images')
 print('Found', len(val_image_list), 'validation images')
@@ -115,10 +115,11 @@ with strategy.scope():
     for layer in model.layers:
         if isinstance(layer, tf.keras.layers.BatchNormalization):
             layer.momentum = 0.9997
+            layer.epsilon = 1e-5
         elif isinstance(layer, tf.keras.layers.Conv2D):
             layer.kernel_regularizer = tf.keras.regularizers.l2(1e-4)
     model.compile(loss=loss, 
-                  optimizer=tf.optimizers.Adam(learning_rate=5e-4), 
+                  optimizer=tf.optimizers.Adam(learning_rate=1e-4), 
                   metrics=['accuracy'])
 
 
