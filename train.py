@@ -11,8 +11,6 @@ from tqdm import tqdm
 import numpy as np
 from glob import glob
 import tensorflow as tf
-import matplotlib.pyplot as plt
-
 from tensorflow.keras.callbacks import Callback
 from tensorflow.keras.callbacks import TensorBoard, ModelCheckpoint, EarlyStopping, LearningRateScheduler
 from deeplab import DeepLabV3Plus
@@ -133,7 +131,7 @@ with strategy.scope():
     model = DeepLabV3Plus(H, W, num_classes)
     model.compile(loss=tf.losses.categorical_crossentropy, 
                   optimizer=tf.optimizers.Adam(learning_rate=5e-4), 
-                  metrics=[tf.metrics.MeanIoU(num_classes=num_classes), 'accuracy'])
+                  metrics=['accuracy'])
 
 
 # In[ ]:
