@@ -133,7 +133,7 @@ callbacks = [mc, tb]
 
 model.fit(train_dataset,
           steps_per_epoch=len(image_list) // batch_size,
-          epochs=150,
+          epochs=300,
           validation_data=val_dataset,
           validation_steps=len(val_image_list) // batch_size,
           callbacks=callbacks)
