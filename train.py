@@ -18,7 +18,7 @@ images_path, xml_path, num_classes, dataset_size = get_miniade20k()
 batch_size = 2
 H, W = 512, 512
 # num_classes = 151
-batch_size = 1
+# batch_size = 1
 # image_list = sorted(glob(
 #     'cityscapes/dataset/train_images/*'))
 # mask_list = sorted(glob(
@@ -124,18 +124,18 @@ tfrecord_path = os.path.join(tfrecord_dir, 'train.tfrecords')
 create_tfrecords(images_path, xml_path, tfrecord_path)
 
 loss = tf.losses.SparseCategoricalCrossentropy(from_logits=True)
-strategy = tf.distribute.MirroredStrategy()
-with strategy.scope():
-    model = DeepLabV3Plus(H, W, num_classes)
-    for layer in model.layers:
-        if isinstance(layer, tf.keras.layers.BatchNormalization):
-            layer.momentum = 0.9997
-            layer.epsilon = 1e-5
-        elif isinstance(layer, tf.keras.layers.Conv2D):
-            layer.kernel_regularizer = tf.keras.regularizers.l2(1e-4)
-    model.compile(loss=loss, 
-                  optimizer=tf.optimizers.Adam(learning_rate=1e-4), 
-                  metrics=['accuracy'])
+# strategy = tf.distribute.MirroredStrategy()
+# with strategy.scope():
+model = DeepLabV3Plus(H, W, num_classes)
+for layer in model.layers:
+    if isinstance(layer, tf.keras.layers.BatchNormalization):
+        layer.momentum = 0.9997
+        layer.epsilon = 1e-5
+    elif isinstance(layer, tf.keras.layers.Conv2D):
+        layer.kernel_regularizer = tf.keras.regularizers.l2(1e-4)
+model.compile(loss=loss, 
+              optimizer=tf.optimizers.Adam(learning_rate=1e-4), 
+              metrics=['accuracy'])
 
 
 tb = TensorBoard(log_dir='logs', write_graph=True, update_freq='batch')
@@ -152,12 +152,12 @@ input_function = parse_tfrecords(
     width=W,
     batch_size=batch_size)
 
-# model.fit(train_dataset,
-#           steps_per_epoch=dataset_size//batch_size,
-#           epochs=300,
-#           # validation_data=val_dataset,
-#           # validation_steps=len(val_image_list) // batch_size,
-#           callbacks=callbacks)
+model.fit(input_function,
+          steps_per_epoch=dataset_size//batch_size,
+          epochs=300,
+          # validation_data=val_dataset,
+          # validation_steps=len(val_image_list) // batch_size,
+          callbacks=callbacks)
 
-for image, mask in input_function.take(2):
-  print(image.shape, mask.shape)
+# for image, mask in input_function.take(2):
+#   print(image.shape, mask.shape)
