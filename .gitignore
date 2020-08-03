@@ -1,0 +1,6 @@
+*.pyc
+__pycache__
+/resnet/__pycache__/*.pyc
+/tfrecords
+/mini_ADE20K
+/resnet/__pycache__/__init__.cpython-36.pyc

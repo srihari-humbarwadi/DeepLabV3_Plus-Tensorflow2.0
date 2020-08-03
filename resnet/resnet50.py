@@ -13,8 +13,11 @@ from __future__ import print_function
 
 import os
 import warnings
+from tensorflow.python.keras import backend
+from tensorflow.python.keras import layers, models
+from tensorflow.keras import utils as keras_utils
 
-from . import get_submodules_from_kwargs
+# from . import get_submodules_from_kwargs
 from . import imagenet_utils
 from .imagenet_utils import decode_predictions
 from .imagenet_utils import _obtain_input_shape
@@ -28,10 +31,10 @@ WEIGHTS_PATH_NO_TOP = ('https://github.com/fchollet/deep-learning-models/'
                        'releases/download/v0.2/'
                        'resnet50_weights_tf_dim_ordering_tf_kernels_notop.h5')
 
-backend = None
-layers = None
-models = None
-keras_utils = None
+# backend = None
+# layers = None
+# models = None
+# keras_utils = None
 
 
 def identity_block(input_tensor, kernel_size, filters, stage, block):
@@ -189,8 +192,8 @@ def ResNet50(include_top=True,
         ValueError: in case of invalid argument for `weights`,
             or invalid input shape.
     """
-    global backend, layers, models, keras_utils
-    backend, layers, models, keras_utils = get_submodules_from_kwargs(kwargs)
+    # global backend, layers, models, keras_utils
+    # backend, layers, models, keras_utils = get_submodules_from_kwargs(kwargs)
 
     if not (weights in {'imagenet', None} or os.path.exists(weights)):
         raise ValueError('The `weights` argument should be either '
@@ -229,25 +232,25 @@ def ResNet50(include_top=True,
                       kernel_initializer='he_normal',
                       name='conv1')(x)
     x = layers.BatchNormalization(axis=bn_axis, name='bn_conv1')(x)
-    x = layers.Activation('relu')(x)
+    x = layers.Activation('relu')(x) #1
     x = layers.ZeroPadding2D(padding=(1, 1), name='pool1_pad')(x)
     x = layers.MaxPooling2D((3, 3), strides=(2, 2))(x)
 
-    x = conv_block(x, 3, [64, 64, 256], stage=2, block='a', strides=(1, 1))
-    x = identity_block(x, 3, [64, 64, 256], stage=2, block='b')
-    x = identity_block(x, 3, [64, 64, 256], stage=2, block='c')
+    x = conv_block(x, 3, [64, 64, 256], stage=2, block='a', strides=(1, 1)) #4
+    x = identity_block(x, 3, [64, 64, 256], stage=2, block='b')#7
+    x = identity_block(x, 3, [64, 64, 256], stage=2, block='c')#10
 
-    x = conv_block(x, 3, [128, 128, 512], stage=3, block='a')
-    x = identity_block(x, 3, [128, 128, 512], stage=3, block='b')
-    x = identity_block(x, 3, [128, 128, 512], stage=3, block='c')
-    x = identity_block(x, 3, [128, 128, 512], stage=3, block='d')
+    x = conv_block(x, 3, [128, 128, 512], stage=3, block='a')#13
+    x = identity_block(x, 3, [128, 128, 512], stage=3, block='b')#16
+    x = identity_block(x, 3, [128, 128, 512], stage=3, block='c')#19
+    x = identity_block(x, 3, [128, 128, 512], stage=3, block='d')#22
 
-    x = conv_block(x, 3, [256, 256, 1024], stage=4, block='a')
-    x = identity_block(x, 3, [256, 256, 1024], stage=4, block='b')
-    x = identity_block(x, 3, [256, 256, 1024], stage=4, block='c')
-    x = identity_block(x, 3, [256, 256, 1024], stage=4, block='d')
-    x = identity_block(x, 3, [256, 256, 1024], stage=4, block='e')
-    x = identity_block(x, 3, [256, 256, 1024], stage=4, block='f')
+    x = conv_block(x, 3, [256, 256, 1024], stage=4, block='a')#25
+    x = identity_block(x, 3, [256, 256, 1024], stage=4, block='b')#28
+    x = identity_block(x, 3, [256, 256, 1024], stage=4, block='c')#31
+    x = identity_block(x, 3, [256, 256, 1024], stage=4, block='d')#34
+    x = identity_block(x, 3, [256, 256, 1024], stage=4, block='e')#37
+    x = identity_block(x, 3, [256, 256, 1024], stage=4, block='f')#40
 
     x = conv_block(x, 3, [512, 512, 2048], stage=5, block='a')
     x = identity_block(x, 3, [512, 512, 2048], stage=5, block='b')

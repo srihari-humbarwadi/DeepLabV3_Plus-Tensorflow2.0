@@ -2,8 +2,8 @@ import tensorflow as tf
 from tensorflow.keras import backend as K
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import AveragePooling2D, Lambda, Conv2D, Conv2DTranspose, Activation, Reshape, concatenate, Concatenate, BatchNormalization, ZeroPadding2D
-from resnet50 import ResNet50
-
+# from resnet50 import ResNet50
+from tensorflow.keras.applications import ResNet50
 
 def Upsample(tensor, size):
     '''bilinear upsampling'''
@@ -65,12 +65,16 @@ def DeepLabV3Plus(img_height, img_width, nclasses=66):
 
     base_model = ResNet50(input_shape=(
         img_height, img_width, 3), weights='imagenet', include_top=False)
+
+    # print(base_model.summary())
     
-    image_features = base_model.get_layer('activation_39').output
+    # image_features = base_model.get_layer('activation_39').output
+    image_features = base_model.get_layer('conv4_block6_out').output
     x_a = ASPP(image_features)
     x_a = Upsample(tensor=x_a, size=[img_height // 4, img_width // 4])
 
-    x_b = base_model.get_layer('activation_9').output
+    # x_b = base_model.get_layer('activation_9').output
+    x_b = base_model.get_layer('conv2_block3_out').output
     x_b = Conv2D(filters=48, kernel_size=1, padding='same',
                  kernel_initializer='he_normal', name='low_level_projection', use_bias=False)(x_b)
     x_b = BatchNormalization(name=f'bn_low_level_projection')(x_b)
