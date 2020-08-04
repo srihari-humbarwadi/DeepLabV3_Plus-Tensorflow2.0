@@ -4,3 +4,4 @@ __pycache__
 /tfrecords
 /mini_ADE20K
 /resnet/__pycache__/__init__.cpython-36.pyc
+/viz

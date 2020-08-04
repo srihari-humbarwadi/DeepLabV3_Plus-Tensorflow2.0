@@ -59,10 +59,27 @@ input_function = parse_tfrecords(
 
 model.fit(input_function,
           steps_per_epoch=dataset_size//batch_size,
-          epochs=30,
+          epochs=300,
           validation_data=input_function,
           validation_steps=dataset_size//batch_size,
           callbacks=callbacks)
 
-# for image, mask in input_function.take(2):
-#   print(image.shape, mask.shape)
+# import cv2
+# import numpy as np
+
+# viz_data_path = os.path.join(os.getcwd(), 'viz')
+# os.makedirs(viz_data_path, exist_ok=True)
+
+# i=0
+
+# for image, mask in input_function.take(10):
+#   for index in range(batch_size):
+#     im = image[index].numpy()
+#     msk = mask[index].numpy()
+#     im = im+[103.939, 116.779, 123.68]
+
+#     cv2.imwrite(os.path.join(viz_data_path, '{}_image.jpg'.format(i)), im.astype(np.uint8))
+#     cv2.imwrite(os.path.join(viz_data_path, '{}_mask.png'.format(i)), msk.astype(np.uint8))
+
+#     i = i+1
+#     # print(image[index].shape, mask[index].shape)
