@@ -25,18 +25,19 @@ os.makedirs(checkpoint_dir, exist_ok=True)
 create_tfrecords(images_path, xml_path, tfrecord_dir)
 
 loss = tf.losses.SparseCategoricalCrossentropy(from_logits=True)
-# strategy = tf.distribute.MirroredStrategy()
-# with strategy.scope():
-model = DeepLabV3Plus(H, W, num_classes)
-for layer in model.layers:
-    if isinstance(layer, tf.keras.layers.BatchNormalization):
-        layer.momentum = 0.9997
-        layer.epsilon = 1e-5
-    elif isinstance(layer, tf.keras.layers.Conv2D):
-        layer.kernel_regularizer = tf.keras.regularizers.l2(1e-4)
-model.compile(loss=loss, 
-              optimizer=tf.optimizers.Adam(learning_rate=1e-4), 
-              metrics=['accuracy'])
+
+strategy = tf.distribute.MirroredStrategy()
+with strategy.scope():
+    model = DeepLabV3Plus(H, W, num_classes)
+    for layer in model.layers:
+        if isinstance(layer, tf.keras.layers.BatchNormalization):
+            layer.momentum = 0.9997
+            layer.epsilon = 1e-5
+        elif isinstance(layer, tf.keras.layers.Conv2D):
+            layer.kernel_regularizer = tf.keras.regularizers.l2(1e-4)
+    model.compile(loss=loss, 
+                  optimizer=tf.optimizers.Adam(learning_rate=1e-4), 
+                  metrics=['accuracy'])
 
 
 tb = TensorBoard(log_dir='logs', write_graph=True, update_freq='batch')
@@ -55,29 +56,29 @@ input_function = parse_tfrecords(
     width=W,
     batch_size=batch_size)
 
-# model.fit(input_function,
-#           steps_per_epoch=dataset_size//batch_size,
-#           epochs=300,
-#           validation_data=input_function,
-#           validation_steps=dataset_size//batch_size,
-#           callbacks=callbacks)
+model.fit(input_function,
+          steps_per_epoch=dataset_size//batch_size,
+          epochs=300,
+          validation_data=input_function,
+          validation_steps=dataset_size//batch_size,
+          callbacks=callbacks)
 
-import cv2
-import numpy as np
+# import cv2
+# import numpy as np
 
-viz_data_path = os.path.join(os.getcwd(), 'viz')
-os.makedirs(viz_data_path, exist_ok=True)
+# viz_data_path = os.path.join(os.getcwd(), 'viz')
+# os.makedirs(viz_data_path, exist_ok=True)
 
-i=0
+# i=0
 
-for image, mask in input_function.take(10):
-  for index in range(batch_size):
-    im = image[index].numpy()
-    msk = mask[index].numpy()
-    im = im+[103.939, 116.779, 123.68]
+# for image, mask in input_function.take(10):
+#   for index in range(batch_size):
+#     im = image[index].numpy()
+#     msk = mask[index].numpy()
+#     im = im+[103.939, 116.779, 123.68]
 
-    cv2.imwrite(os.path.join(viz_data_path, '{}_image.jpg'.format(i)), im.astype(np.uint8))
-    cv2.imwrite(os.path.join(viz_data_path, '{}_mask.png'.format(i)), msk.astype(np.uint8))
+#     cv2.imwrite(os.path.join(viz_data_path, '{}_image.jpg'.format(i)), im.astype(np.uint8))
+#     cv2.imwrite(os.path.join(viz_data_path, '{}_mask.png'.format(i)), msk.astype(np.uint8))
 
-    i = i+1
+#     i = i+1
 #     # print(image[index].shape, mask[index].shape)

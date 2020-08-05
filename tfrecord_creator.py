@@ -64,7 +64,9 @@ def create_tfrecords(image_dir,mask_dir,out_dir, training_data=True):
       prefix = 'train' if training_data else 'test'
       end_index = min(start_index+images_per_shard, num_images)
       shard_meta['%s-%05d-of-%05d.tfrecord'%(prefix, idx+1, _NUM_SHARDS)] = (start_index, end_index)
-      start_index = end_index+1 
+      start_index = end_index+1
+
+    # already_seen = [] 
 
     for key, (START, END) in shard_meta.items():
 
@@ -74,6 +76,11 @@ def create_tfrecords(image_dir,mask_dir,out_dir, training_data=True):
 
            for image_file in tqdm.tqdm(image_paths[START:END]):
                 #img = cv2.imread(path)  # -1 to read as default dat type of original image and not as uint8
+                # if image_file not in already_seen:
+                #   print(image_file)
+                #   already_seen.append(image_file)
+                # else:
+                #   raise ValueError('Repeated image {}'.format(image_file))
                 with open(image_file, 'rb') as imf:
                   image_string = imf.read()
                 image_array = np.array(Image.open(image_file))
