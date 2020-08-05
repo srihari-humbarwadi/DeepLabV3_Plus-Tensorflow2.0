@@ -115,11 +115,15 @@ def parse_tfrecords(filenames, height, width, batch_size=32):
     # dataset = dataset.batch(batch_size)    # Batch Size
     # batch_dataset = dataset.prefetch(buffer_size=4)
 
-    dataset = tf.data.Dataset.list_files(filenames).repeat(-1)
+    filenames=tf.io.gfile.glob(filenames)
+    dataset=tf.data.Dataset.from_tensor_slices(filenames).shuffle(buffer_size=16).repeat(-1)
+
+    #dataset = tf.data.Dataset.list_files(filenames).repeat(-1)
     dataset = dataset.interleave(
       tf.data.TFRecordDataset, 
       num_parallel_calls=tf.data.experimental.AUTOTUNE,
-      deterministic=False)
+      cycle_length=4, 
+      block_length=16)
 
     dataset = dataset.batch(
       batch_size, 
@@ -129,7 +133,7 @@ def parse_tfrecords(filenames, height, width, batch_size=32):
       _parse_function, 
       num_parallel_calls=tf.data.experimental.AUTOTUNE)
 
-    dataset = dataset.shuffle(buffer_size=256)
+    # dataset = dataset.shuffle(buffer_size=256)
 
     # dataset = dataset.cache()
     dataset = dataset.prefetch(buffer_size=tf.data.experimental.AUTOTUNE)
