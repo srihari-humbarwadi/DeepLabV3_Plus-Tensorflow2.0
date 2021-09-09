@@ -1,6 +1,3 @@
-[![HitCount](http://hits.dwyl.io/srihari-humbarwadi/https://githubcom/srihari-humbarwadi/DeepLabV3_Plus-Tensorflow20.svg)](http://hits.dwyl.io/srihari-humbarwadi/https://githubcom/srihari-humbarwadi/DeepLabV3_Plus-Tensorflow20)
-
-
 ## Architecture
 ![model](deeplabv3plus.png)
 
